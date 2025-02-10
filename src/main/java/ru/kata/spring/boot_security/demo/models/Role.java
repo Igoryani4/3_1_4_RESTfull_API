@@ -1,5 +1,7 @@
 package ru.kata.spring.boot_security.demo.models;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
@@ -8,6 +10,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "roles")
+@JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class)
 public class Role implements GrantedAuthority {
 
     @Id
@@ -18,6 +21,10 @@ public class Role implements GrantedAuthority {
     private String title;
 
     @ManyToMany(mappedBy = "role")
+    @JsonIdentityInfo(
+            generator = ObjectIdGenerators.PropertyGenerator.class,
+            property = "id"
+    )
     private Set<User> user;
 
     public Role() {
