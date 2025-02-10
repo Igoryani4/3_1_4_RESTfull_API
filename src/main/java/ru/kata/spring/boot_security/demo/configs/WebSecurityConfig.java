@@ -38,15 +38,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .antMatchers("/login").permitAll()
-                .antMatchers("/index","/admin","/update","/update/", "/delete/","/register").hasRole( "ADMIN")
-                .antMatchers("/index","/user").hasAnyRole("USER", "ADMIN")
-                .anyRequest().authenticated()
+                .antMatchers("/admin","/update","/update/", "/delete/","/register")
+                .hasRole("ADMIN")
+                .antMatchers("/user").hasAnyRole("USER", "ADMIN")
+                .anyRequest().not().authenticated()
                 .and()
                 .formLogin().successHandler(successUserHandler)
-                .permitAll()
-                .and()
+                .permitAll().and()
                 .logout().logoutSuccessUrl("/login")
-                .permitAll();
+                .permitAll()
+                .and().csrf().disable();
     }
 
     // аутентификация inMemory

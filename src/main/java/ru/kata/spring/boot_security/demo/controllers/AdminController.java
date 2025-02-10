@@ -1,6 +1,8 @@
 package ru.kata.spring.boot_security.demo.controllers;
 
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -13,38 +15,29 @@ import ru.kata.spring.boot_security.demo.repository.RoleRepository;
 import ru.kata.spring.boot_security.demo.repository.UserRepository;
 import ru.kata.spring.boot_security.demo.service.CustomUserDetailService;
 
-import java.security.Principal;
 import java.util.List;
 
-@Controller()
+@RestController()
+@RequestMapping("/api")
 public class AdminController {
 
     private final CustomUserDetailService customUserDetailService;
-    private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
 
 
-    public AdminController(CustomUserDetailService customUserDetailService, UserRepository userRepository, PasswordEncoder passwordEncoder, RoleRepository roleRepository) {
+    public AdminController(CustomUserDetailService customUserDetailService, UserRepository userRepository,
+                           PasswordEncoder passwordEncoder, RoleRepository roleRepository) {
         this.customUserDetailService = customUserDetailService;
-        this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.roleRepository = roleRepository;
     }
 
     @GetMapping("/admin")
-    public String admin(Model model, User user) {
-        UserDetails userDetails = (UserDetails) SecurityContextHolder
-                .getContext().getAuthentication().getPrincipal();
-        User finduser = userRepository.findByUsernameOrEmail(userDetails
-                .getUsername(), userDetails.getUsername()).get();
-        List<User> users = customUserDetailService.findAll();
-        model.addAttribute("allUsers", users);
-        model.addAttribute("user", user);
-        model.addAttribute("this_user", finduser);
-        List<Role> roles = roleRepository.findAll();
-        model.addAttribute("roles", roles);
-        return "admin";
+    public ResponseEntity<List<User>> findAll() {
+        List<User> list = customUserDetailService.findAll();
+        ResponseEntity<List<User>> response = new ResponseEntity<>(list, HttpStatus.OK);
+        return response;
     }
 
     @GetMapping("/register")
