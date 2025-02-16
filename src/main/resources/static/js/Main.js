@@ -34,7 +34,6 @@ async function getTableWithUsers() {
         .then(res => res.json())
         .then(users => {
             users.forEach(user => {
-                console.log(user.username)
                 let count = 0
                 let newTitle = user.role[count].title
                 if (user.role.length > 1) {
@@ -208,23 +207,22 @@ async function deleteUser(modal, id) {
 
 
 
-function addNewUser(modal) {
+async function addNewUser(modal) {
     $('#addNewUserButton').click(async () =>  {
-        let addUserForm = $('#addNewUserForm')
-        let username = addUserForm.find('#AddNewUsername').val().trim();
-        let password = addUserForm.find('#AddNewUserPassword').val().trim();
-        let email = addUserForm.find('#AddNewUserEmail').val().trim();
+        let addUserFormNew = $('#addNewUserForm')
+        let username = addUserFormNew.find('#AddNewUsername').val().trim();
+        let password = addUserFormNew.find('#AddNewUserPassword').val().trim();
+        let email = addUserFormNew.find('#AddNewUserEmail').val().trim();
 
         let data = {
             username: username,
             password: password,
             email: email
         }
-        const response = await userFetchService.addNewUser(data);
-
+        const response = userFetchService.addNewUser(data);
+        alert("New user Create")
         if (response.ok) {
             await getTableWithUsers()
-
         } else {
             let body = await response.json();
             let alert = `<div class="alert alert-danger alert-dismissible fade show col-12" role="alert" id="sharaBaraMessageError">
