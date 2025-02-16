@@ -11,6 +11,7 @@ import ru.kata.spring.boot_security.demo.models.Role;
 import ru.kata.spring.boot_security.demo.models.User;
 import ru.kata.spring.boot_security.demo.repository.RoleRepository;
 import ru.kata.spring.boot_security.demo.repository.UserRepository;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -33,24 +34,32 @@ public class CustomUserDetailService implements UserDetailsService {
         this.userRepository = userRepository;
     }
 
-    public User saveUser(User user, Role role) {
-        Set<Role> role1 = roleRepository.findByTitle(role.getTitle());
-        if(role1.isEmpty()){
-            role1 = (Set<Role>) checkRoleExist();
+    public User saveUser(User user) {
+
+        Set<Role> role1 = user.getRole();
+        if(role1 == null || role1.isEmpty()){
+            role1 = roleRepository.findByTitle("ROLE_USER");
         }
         user.setRole(role1);
         userRepository.save(user);
         return user;
     }
 
-    private Role checkRoleExist() {
+    private Set<Role> checkRoleExist() {
         Role role = new Role();
         role.setTitle("ROLE_USER");
-        return role;
+        Set<Role> roles = new HashSet<>();
+        roles.add(role);
+        return roles;
     }
 
 
     public void update(User user) {
+        Set<Role> role1 = user.getRole();
+        if(role1 == null || role1.isEmpty()){
+            role1 = roleRepository.findByTitle("ROLE_USER");
+        }
+        user.setRole(role1);
         userRepository.save(user);
     }
 
@@ -62,8 +71,9 @@ public class CustomUserDetailService implements UserDetailsService {
         return userRepository.getOne(id);
     }
 
-    public List<User> findAll() {
-        return userRepository.findAll();
+    public Set<User> findAll() {
+        return userRepository.findAll().stream().sorted(Comparator.comparing(User::getId))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
 
