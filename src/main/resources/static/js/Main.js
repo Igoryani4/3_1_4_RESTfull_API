@@ -2,11 +2,9 @@
 
 $(async function () {
     await getTableWithUsers();
-    await getNewUserForm();
     await getDefaultModal();
     await addNewUser();
     await findThisUser();
-    await getTableWithUsers();
 })
 
 
@@ -20,7 +18,7 @@ const userFetchService = {
     findAllUsers: async () => await fetch('api/admin'),
     findThisUser: async () => await fetch(`api/this_user`),
     findOneUser: async (id) => await fetch(`api/user/${id}`),
-    addNewUser: async (user) => await fetch('api/register', {method: 'POST', headers: userFetchService.head, body: JSON.stringify(user)}),
+    addNewUser: async (user, id) => await fetch('api/register', {method: 'POST', headers: userFetchService.head, body: JSON.stringify(user)}),
     updateUser: async (user) => await fetch(`api/update`, {method: 'PUT', headers: userFetchService.head, body: JSON.stringify(user)}),
     deleteUser: async (id) => await fetch(`api/delete/${id}`, {method: 'DELETE', headers: userFetchService.head})
 }
@@ -36,6 +34,7 @@ async function getTableWithUsers() {
         .then(res => res.json())
         .then(users => {
             users.forEach(user => {
+                console.log(user.username)
                 let count = 0
                 let newTitle = user.role[count].title
                 if (user.role.length > 1) {
@@ -89,13 +88,6 @@ async function findThisUser(){
     })
 }
 
-async function getNewUserForm() {
-    let button = $(`#SliderNewUserForm`);
-    let form = $(`#defaultSomeForm`)
-    button.on('click', () => {
-        form.show();
-    })
-}
 
 
 async function getDefaultModal() {
@@ -160,9 +152,6 @@ async function editUser(modal, id) {
         `;
         modal.find('.modal-body').append(bodyForm);
     })
-    $('.rolesForNewUser').on('change', ':checkbox', function() {
-        console.log('Чекбокс отмечен? ' + ($(this).is(':checked') ? 'Да' : 'Нет'));
-    });
 
     $("#editButton").on('click', async () => {
         let idEd = modal.find("#id").val().trim();
@@ -219,7 +208,7 @@ async function deleteUser(modal, id) {
 
 
 
-async function addNewUser() {
+function addNewUser(modal) {
     $('#addNewUserButton').click(async () =>  {
         let addUserForm = $('#addNewUserForm')
         let username = addUserForm.find('#AddNewUsername').val().trim();
@@ -234,10 +223,8 @@ async function addNewUser() {
         const response = await userFetchService.addNewUser(data);
 
         if (response.ok) {
-            await getTableWithUsers();
-            addUserForm.find('#AddNewUsername').val('');
-            addUserForm.find('#AddNewUserPassword').val('');
-            addUserForm.find('#AddNewUserEmail').val('');
+            await getTableWithUsers()
+
         } else {
             let body = await response.json();
             let alert = `<div class="alert alert-danger alert-dismissible fade show col-12" role="alert" id="sharaBaraMessageError">
