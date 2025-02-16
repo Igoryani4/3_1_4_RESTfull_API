@@ -50,19 +50,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and().csrf().disable();
     }
 
-    // аутентификация inMemory
-//    @Bean
-//    @Override
-//    public UserDetailsService userDetailsService() {
-//        UserDetails user =
-//                User.withDefaultPasswordEncoder()
-//                        .username("user")
-//                        .password("user")
-//                        .roles("ROLE_USER")
-//                        .build();
-//
-//        return new CustomUserDetailService((UserRepository) user);
-//    }
 
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {

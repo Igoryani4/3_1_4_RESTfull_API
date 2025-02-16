@@ -6,6 +6,7 @@ $(async function () {
     await getDefaultModal();
     await addNewUser();
     await findThisUser();
+    await getTableWithUsers();
 })
 
 
@@ -233,11 +234,10 @@ async function addNewUser() {
         const response = await userFetchService.addNewUser(data);
 
         if (response.ok) {
-            await getTableWithUser();
+            await getTableWithUsers();
             addUserForm.find('#AddNewUsername').val('');
             addUserForm.find('#AddNewUserPassword').val('');
             addUserForm.find('#AddNewUserEmail').val('');
-            // addUserForm.find('#AddNewUserRole').val('');
         } else {
             let body = await response.json();
             let alert = `<div class="alert alert-danger alert-dismissible fade show col-12" role="alert" id="sharaBaraMessageError">

@@ -35,31 +35,21 @@ public class CustomUserDetailService implements UserDetailsService {
     }
 
     public User saveUser(User user) {
-
-        Set<Role> role1 = user.getRole();
-        if(role1 == null || role1.isEmpty()){
-            role1 = roleRepository.findByTitle("ROLE_USER");
-        }
-        user.setRole(role1);
+        user.setRole(checkRoleExist(user.getRole()));
         userRepository.save(user);
         return user;
     }
 
-    private Set<Role> checkRoleExist() {
-        Role role = new Role();
-        role.setTitle("ROLE_USER");
-        Set<Role> roles = new HashSet<>();
-        roles.add(role);
+    private Set<Role> checkRoleExist(Set<Role> roles) {
+        if(roles == null || roles.isEmpty()){
+            roles = roleRepository.findByTitle("ROLE_USER");
+        }
         return roles;
     }
 
 
     public void update(User user) {
-        Set<Role> role1 = user.getRole();
-        if(role1 == null || role1.isEmpty()){
-            role1 = roleRepository.findByTitle("ROLE_USER");
-        }
-        user.setRole(role1);
+        user.setRole(checkRoleExist(user.getRole()));
         userRepository.save(user);
     }
 

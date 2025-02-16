@@ -14,7 +14,7 @@ import ru.kata.spring.boot_security.demo.repository.RoleRepository;
 import ru.kata.spring.boot_security.demo.repository.UserRepository;
 import ru.kata.spring.boot_security.demo.service.CustomUserDetailService;
 
-import java.util.List;
+
 import java.util.Set;
 
 @RestController()
